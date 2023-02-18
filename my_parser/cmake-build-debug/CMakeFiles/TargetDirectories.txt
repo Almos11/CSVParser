@@ -1,0 +1,3 @@
+/home/aleksandr/data/course2/C++/Yadro_test_task/CSVParser/my_parser/cmake-build-debug/CMakeFiles/my_parser.dir
+/home/aleksandr/data/course2/C++/Yadro_test_task/CSVParser/my_parser/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/aleksandr/data/course2/C++/Yadro_test_task/CSVParser/my_parser/cmake-build-debug/CMakeFiles/rebuild_cache.dir
