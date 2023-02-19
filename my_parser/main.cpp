@@ -9,14 +9,13 @@
 
 struct Data {
     std::unordered_map<std::string, int> map_columns;
-    std::vector<std::string> list_columns;
-    std::vector<std::string> list_rows;
     std::unordered_map<std::string, int> map_rows;
+    std::vector<std::string> list_of_column_names;
+    std::vector<std::string> list_of_row_names;
     std::vector<std::string> list_cells;
-    std::vector<int> ans_list_cells;
 };
 
-int parse(const std::string &value, Data *data);
+int parse(std::string &value, Data *data);
 
 int get_number(const std::string &value, int &i) {
     int number = 0;
@@ -33,49 +32,59 @@ void skip_space(const std::string &value, int &pointer) {
     }
 }
 
-int get_num_cell(const std::string &value, int &i, Data *data) {
+void check_trash_after_num(const std::string &line, int &i) {
+    skip_space(line, i);
+    if (line[i] != '\0') {
+        std::cerr << "Bad file format" << '\n';
+        exit(1);
+    }
+}
+
+int get_num_from_exact_cell(const std::string &name_cell, int &i, Data *data) {
     std::string name_col;
     std::string name_row;
-    while (!std::isdigit(value[i])) {
-        name_col += value[i];
+    while (!std::isdigit(name_cell[i])) {
+        name_col += name_cell[i];
         i++;
     }
-    while (std::isdigit(value[i])) {
-        name_row += value[i];
+    while (std::isdigit(name_cell[i])) {
+        name_row += name_cell[i];
         i++;
     }
+    check_trash_after_num(name_cell, i);
     if (!data->map_columns.count(name_col) || !data->map_rows.count(name_row)) {
-        std::cerr << "Wrong file" << '\n';
+        std::cerr << "Bad file format" << '\n';
         exit(1);
     }
     int num_col = data->map_columns[name_col];
     int num_row = data->map_rows[name_row];
     int num_cell = num_row * (int)data->map_columns.size() + num_col;
     int num = parse(data->list_cells[num_cell], data);
-    data->list_cells[num_cell] = std::to_string(num);
     return num;
 }
 
-int parse_expr(const std::string &value, Data *data) {
+int parse_expr(const std::string &expression, Data *data) {
     int index_operator;
-    int num_1 = 0;
-    int num_2 = 0;
+    int num_1;
+    int num_2;
     int i = 0;
-    skip_space(value, i);
-    if (value[i] != '=') {
-        return 0;
+    skip_space(expression, i);
+    if (expression[i] != '=') {
+        std::cerr << "Bad file format" << '\n';
+        exit(1);
     }
     i++;
-    skip_space(value, i);
-    num_1 = (std::isdigit(value[i])) ? get_number(value, i)
-                                     : get_num_cell(value, i, data);
-    skip_space(value, i);
-    index_operator = i;
-    i++;
-    skip_space(value, i);
-    num_2 = (std::isdigit(value[i])) ? get_number(value, i)
-                                     : get_num_cell(value, i, data);
-    switch (value[index_operator]) {
+    skip_space(expression, i);
+    num_1 = (std::isdigit(expression[i]))
+                ? get_number(expression, i)
+                : get_num_from_exact_cell(expression, i, data);
+    skip_space(expression, i);
+    index_operator = i++;
+    skip_space(expression, i);
+    num_2 = (std::isdigit(expression[i]))
+                ? get_number(expression, i)
+                : get_num_from_exact_cell(expression, i, data);
+    switch (expression[index_operator]) {
     case '+':
         num_1 += num_2;
         break;
@@ -96,26 +105,31 @@ int parse_expr(const std::string &value, Data *data) {
     return num_1;
 }
 
-int parse(const std::string &value, Data *data) {
-    int num = 0;
+int parse(std::string &value, Data *data) {
+    int num;
     int i = 0;
     skip_space(value, i);
-    num = (std::isdigit(value[i])) ? get_number(value, i)
-                                   : parse_expr(value, data);
+    if (std::isdigit(value[i])) {
+        num = get_number(value, i);
+        check_trash_after_num(value, i);
+    } else {
+        num = parse_expr(value, data);
+    }
+    value = std::to_string(num);
     return num;
 }
 
 void process_file(Data *data) {
     for (size_t i = 0; i < data->list_cells.size(); i++) {
-        data->ans_list_cells.push_back(parse(data->list_cells[i], data));
+        parse(data->list_cells[i], data);
     }
 }
 
-void print_ans(Data *data, const std::string &fst_line) {
+void print_ans(const Data *data, const std::string &fst_line) {
     std::cout << fst_line << '\n';
     std::size_t count_el_in_row = data->map_columns.size();
-    for (size_t i = 0; i < data->ans_list_cells.size(); i++) {
-        std::cout << data->ans_list_cells[i];
+    for (size_t i = 0; i < data->list_cells.size(); i++) {
+        std::cout << data->list_cells[i];
         if ((i + 1) % count_el_in_row == 0) {
             std::cout << '\n';
         } else {
