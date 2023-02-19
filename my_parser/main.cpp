@@ -14,11 +14,6 @@ struct Data {
     std::unordered_map<std::string, int> map_rows;
     std::vector<std::string> list_cells;
     std::vector<int> ans_list_cells;
-    Data() {
-        list_cells = {};
-        map_columns = {};
-        map_rows = {};
-    }
 };
 
 int parse(const std::string &value, Data *data);
@@ -48,6 +43,10 @@ int get_num_cell(const std::string &value, int &i, Data *data) {
     while (std::isdigit(value[i])) {
         name_row += value[i];
         i++;
+    }
+    if (!data->map_columns.count(name_col) || !data->map_rows.count(name_row)) {
+        std::cerr << "Wrong file" << '\n';
+        exit(1);
     }
     int num_col = data->map_columns[name_col];
     int num_row = data->map_rows[name_row];
@@ -87,6 +86,10 @@ int parse_expr(const std::string &value, Data *data) {
         num_1 *= num_2;
         break;
     case '/':
+        if (num_2 == 0) {
+            std::cerr << "Division by zero" << '\n';
+            exit(1);
+        }
         num_1 /= num_2;
         break;
     }
@@ -158,7 +161,7 @@ void solution(const std::string &file_name) {
         process_file(&data);
         print_ans(&data, fst_line);
     } catch (const std::exception &e) {
-        std::cerr << "Exception: " << e.what() << std::endl;
+        std::cerr << "Exception: " << e.what() << '\n';
         exit(1);
     }
 }
