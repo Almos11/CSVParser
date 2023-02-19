@@ -127,35 +127,47 @@ void solution(const std::string &file_name) {
     int col = 0;
     int row = 0;
     Data data;
-    std::ifstream file(file_name);
     std::string line;
     std::string fst_line;
-    while (std::getline(file, line)) {
-        if (is_fst_line) {
-            fst_line = line;
+    try {
+        std::ifstream file(file_name);
+        if (!file.is_open()) {
+            throw std::ifstream::failure("Error opening file!");
         }
-        std::string row_line;
-        std::stringstream ss(line);
-        is_fst_el_in_line = true;
-        while (std::getline(ss, row_line, ',')) {
+        while (std::getline(file, line)) {
             if (is_fst_line) {
-                data.map_columns[row_line] = col++;
-            } else {
-                if (is_fst_el_in_line) {
-                    data.map_rows[row_line] = row++;
-                    is_fst_el_in_line = false;
-                }
-                data.list_cells.push_back(row_line);
+                fst_line = line;
             }
+            std::string row_line;
+            std::stringstream ss(line);
+            is_fst_el_in_line = true;
+            while (std::getline(ss, row_line, ',')) {
+                if (is_fst_line) {
+                    data.map_columns[row_line] = col++;
+                } else {
+                    if (is_fst_el_in_line) {
+                        data.map_rows[row_line] = row++;
+                        is_fst_el_in_line = false;
+                    }
+                    data.list_cells.push_back(row_line);
+                }
+            }
+            is_fst_line = false;
         }
-        is_fst_line = false;
+        file.close();
+        process_file(&data);
+        print_ans(&data, fst_line);
+    } catch (const std::exception &e) {
+        std::cerr << "Exception: " << e.what() << std::endl;
+        exit(1);
     }
-    file.close();
-    process_file(&data);
-    print_ans(&data, fst_line);
 }
 
 int main(int argc, char *argv[]) {
+    if (argc < 2) {
+        std::cerr << "No input file" << '\n';
+        return 1;
+    }
     solution(argv[1]);
     return 0;
 }
