@@ -42,9 +42,15 @@ void CSV_parser::read_the_file(const std::string &file_name) {
                 continue;
             }
             if (is_first_line_in_file) {
+                if (map_columns.count(row_line)) {
+                    throw std::runtime_error("Bad file format. Incorrect form of the table!");
+                }
                 map_columns[row_line] = col++;
             } else {
                 if (is_first_element_in_line) {
+                    if (map_rows.count(row_line)) {
+                        throw std::runtime_error("Bad file format. Incorrect form of the table!");
+                    }
                     map_rows[row_line] = row++;
                     is_first_element_in_line = false;
                 }
