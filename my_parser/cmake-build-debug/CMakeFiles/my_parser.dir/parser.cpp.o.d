@@ -1,5 +1,5 @@
-CMakeFiles/my_parser.dir/main.cpp.o: \
- /home/aleksandr/data/course2/C++/Yadro_test_task/CSVParser/my_parser/main.cpp \
+CMakeFiles/my_parser.dir/parser.cpp.o: \
+ /home/aleksandr/data/course2/C++/Yadro_test_task/CSVParser/my_parser/parser.cpp \
  /usr/include/stdc-predef.h \
  /home/aleksandr/data/course2/C++/Yadro_test_task/CSVParser/my_parser/parser.h \
  /usr/include/c++/10/algorithm /usr/include/c++/10/utility \

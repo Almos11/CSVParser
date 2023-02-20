@@ -87,6 +87,12 @@
 		<Unit filename="/home/aleksandr/data/course2/C++/Yadro_test_task/CSVParser/my_parser/main.cpp">
 			<Option target="my_parser"/>
 		</Unit>
+		<Unit filename="/home/aleksandr/data/course2/C++/Yadro_test_task/CSVParser/my_parser/parser.cpp">
+			<Option target="my_parser"/>
+		</Unit>
+		<Unit filename="/home/aleksandr/data/course2/C++/Yadro_test_task/CSVParser/my_parser/parser.h">
+			<Option target="my_parser"/>
+		</Unit>
 		<Unit filename="/home/aleksandr/data/course2/C++/Yadro_test_task/CSVParser/my_parser/CMakeLists.txt">
 			<Option virtualFolder="CMake Files\"/>
 		</Unit>
