@@ -20,7 +20,8 @@ class CSV_parser {
     void read_the_file(const std::string &file_name);
     static int get_number(const std::string &line, int &i);
     static void skip_space(const std::string &line, int &pointer);
-    static void check_trash_after_expression(const std::string &line, int &pointer);
+    static void check_trash_after_expression(const std::string &line,
+                                             int &pointer);
     int get_number_from_exact_cell(const std::string &name_cell, int &pointer);
     int expression_parser(const std::string &expression);
     int parser(std::string &line);
