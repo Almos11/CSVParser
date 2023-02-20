@@ -15,19 +15,19 @@ struct Data {
     std::vector<std::string> list_cells;
 };
 
-int parse(std::string &value, Data *data);
+int parse(std::string &line, Data *data);
 
-int get_number(const std::string &value, int &i) {
+int get_number(const std::string &line, int &i) {
     int number = 0;
-    while (std::isdigit(value[i])) {
+    while (std::isdigit(line[i])) {
         number *= 10;
-        number += value[i++] - '0';
+        number += line[i++] - '0';
     }
     return number;
 }
 
-void skip_space(const std::string &value, int &pointer) {
-    while (std::isspace(value[pointer])) {
+void skip_space(const std::string &line, int &pointer) {
+    while (std::isspace(line[pointer])) {
         pointer++;
     }
 }
@@ -41,10 +41,10 @@ void check_trash_after_num(const std::string &line, int &i) {
 }
 
 int get_num_from_exact_cell(const std::string &name_cell, int &i, Data *data) {
-    std::string name_col;
+    std::string name_column;
     std::string name_row;
     while (!std::isdigit(name_cell[i])) {
-        name_col += name_cell[i];
+        name_column += name_cell[i];
         i++;
     }
     while (std::isdigit(name_cell[i])) {
@@ -52,21 +52,19 @@ int get_num_from_exact_cell(const std::string &name_cell, int &i, Data *data) {
         i++;
     }
     check_trash_after_num(name_cell, i);
-    if (!data->map_columns.count(name_col) || !data->map_rows.count(name_row)) {
+    if (!data->map_columns.count(name_column) || !data->map_rows.count(name_row)) {
         std::cerr << "Bad file format" << '\n';
         exit(1);
     }
-    int num_col = data->map_columns[name_col];
-    int num_row = data->map_rows[name_row];
-    int num_cell = num_row * (int)data->map_columns.size() + num_col;
-    int num = parse(data->list_cells[num_cell], data);
-    return num;
+    int column_number = data->map_columns[name_column];
+    int row_number = data->map_rows[name_row];
+    int cell_number =
+        row_number * static_cast<int>(data->map_columns.size()) + column_number;
+    int number = parse(data->list_cells[cell_number], data);
+    return number;
 }
 
 int parse_expr(const std::string &expression, Data *data) {
-    int index_operator;
-    int num_1;
-    int num_2;
     int i = 0;
     skip_space(expression, i);
     if (expression[i] != '=') {
@@ -75,62 +73,63 @@ int parse_expr(const std::string &expression, Data *data) {
     }
     i++;
     skip_space(expression, i);
-    num_1 = (std::isdigit(expression[i]))
+    int first_number = (std::isdigit(expression[i]))
                 ? get_number(expression, i)
                 : get_num_from_exact_cell(expression, i, data);
     skip_space(expression, i);
-    index_operator = i++;
+    int index_operator = i;
+    i++;
     skip_space(expression, i);
-    num_2 = (std::isdigit(expression[i]))
+    int second_number = (std::isdigit(expression[i]))
                 ? get_number(expression, i)
                 : get_num_from_exact_cell(expression, i, data);
     switch (expression[index_operator]) {
     case '+':
-        num_1 += num_2;
+        first_number += second_number;
         break;
     case '-':
-        num_1 -= num_2;
+        first_number -= second_number;
         break;
     case '*':
-        num_1 *= num_2;
+        first_number *= second_number;
         break;
     case '/':
-        if (num_2 == 0) {
+        if (second_number == 0) {
             std::cerr << "Division by zero" << '\n';
             exit(1);
         }
-        num_1 /= num_2;
+        first_number /= second_number;
         break;
     }
-    return num_1;
+    return first_number;
 }
 
-int parse(std::string &value, Data *data) {
-    int num;
+int parse(std::string &line, Data *data) {
+    int number;
     int i = 0;
-    skip_space(value, i);
-    if (std::isdigit(value[i])) {
-        num = get_number(value, i);
-        check_trash_after_num(value, i);
+    skip_space(line, i);
+    if (std::isdigit(line[i])) {
+        number = get_number(line, i);
+        check_trash_after_num(line, i);
     } else {
-        num = parse_expr(value, data);
+        number = parse_expr(line, data);
     }
-    value = std::to_string(num);
-    return num;
+    line = std::to_string(number);
+    return number;
 }
 
 void process_file(Data *data) {
-    for (size_t i = 0; i < data->list_cells.size(); i++) {
+    for (std::size_t i = 0; i < data->list_cells.size(); i++) {
         parse(data->list_cells[i], data);
     }
 }
 
-void print_ans(const Data *data, const std::string &fst_line) {
-    std::cout << fst_line << '\n';
-    std::size_t count_el_in_row = data->map_columns.size();
-    for (size_t i = 0; i < data->list_cells.size(); i++) {
+void print_ans(const Data *data, const std::string &first_line_in_file) {
+    std::cout << first_line_in_file << '\n';
+    std::size_t count_elements_in_row = data->map_columns.size();
+    for (std::size_t i = 0; i < data->list_cells.size(); i++) {
         std::cout << data->list_cells[i];
-        if ((i + 1) % count_el_in_row == 0) {
+        if ((i + 1) % count_elements_in_row == 0) {
             std::cout << '\n';
         } else {
             std::cout << ',';
@@ -139,8 +138,7 @@ void print_ans(const Data *data, const std::string &fst_line) {
 }
 
 void solution(const std::string &file_name) {
-    bool is_fst_line = true;
-    bool is_fst_el_in_line;
+    bool is_first_line_in_file = true;
     int col = 0;
     int row = 0;
     Data data;
@@ -152,24 +150,24 @@ void solution(const std::string &file_name) {
             throw std::ifstream::failure("Error opening file!");
         }
         while (std::getline(file, line)) {
-            if (is_fst_line) {
+            if (is_first_line_in_file) {
                 fst_line = line;
             }
             std::string row_line;
             std::stringstream ss(line);
-            is_fst_el_in_line = true;
+            bool is_first_element_in_line = true;
             while (std::getline(ss, row_line, ',')) {
-                if (is_fst_line) {
+                if (is_first_line_in_file) {
                     data.map_columns[row_line] = col++;
                 } else {
-                    if (is_fst_el_in_line) {
+                    if (is_first_element_in_line) {
                         data.map_rows[row_line] = row++;
-                        is_fst_el_in_line = false;
+                        is_first_element_in_line = false;
                     }
                     data.list_cells.push_back(row_line);
                 }
             }
-            is_fst_line = false;
+            is_first_line_in_file = false;
         }
         file.close();
         process_file(&data);
