@@ -1,7 +1,6 @@
 # CSVParser
-Csv parser
-Компиляция:
-Из директории CSVParser:
+Компиляция из директории CSVParser:
+
 1) Под clang:
 clang++-12 my_parser/main.cpp my_parser/parser.h my_parser/parser.cpp
 ./a.out file
