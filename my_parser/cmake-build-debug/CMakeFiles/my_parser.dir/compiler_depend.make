@@ -220,11 +220,19 @@ CMakeFiles/my_parser.dir/main.cpp.o: /home/aleksandr/data/course2/C++/Yadro_test
   /usr/include/x86_64-linux-gnu/c++/10/bits/c++io.h \
   /usr/include/c++/10/bits/fstream.tcc \
   /usr/include/c++/10/iostream \
+  /usr/include/c++/10/map \
+  /usr/include/c++/10/bits/stl_tree.h \
+  /usr/include/c++/10/bits/stl_map.h \
+  /usr/include/c++/10/bits/stl_multimap.h \
   /usr/include/c++/10/sstream \
   /usr/include/c++/10/bits/sstream.tcc
 
 
 /usr/include/c++/10/sstream:
+
+/usr/include/c++/10/bits/stl_multimap.h:
+
+/usr/include/c++/10/bits/stl_tree.h:
 
 /usr/include/x86_64-linux-gnu/c++/10/bits/c++io.h:
 
@@ -323,6 +331,8 @@ CMakeFiles/my_parser.dir/main.cpp.o: /home/aleksandr/data/course2/C++/Yadro_test
 /usr/include/x86_64-linux-gnu/bits/types/time_t.h:
 
 /usr/include/stdlib.h:
+
+/usr/include/c++/10/map:
 
 /usr/include/x86_64-linux-gnu/bits/thread-shared-types.h:
 
@@ -553,6 +563,8 @@ CMakeFiles/my_parser.dir/main.cpp.o: /home/aleksandr/data/course2/C++/Yadro_test
 /usr/include/c++/10/bits/functional_hash.h:
 
 /usr/include/c++/10/bits/refwrap.h:
+
+/usr/include/c++/10/bits/stl_map.h:
 
 /usr/include/x86_64-linux-gnu/bits/types/struct_sched_param.h:
 

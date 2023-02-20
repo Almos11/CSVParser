@@ -174,4 +174,7 @@ CMakeFiles/my_parser.dir/main.cpp.o: \
  /usr/include/x86_64-linux-gnu/c++/10/bits/basic_file.h \
  /usr/include/x86_64-linux-gnu/c++/10/bits/c++io.h \
  /usr/include/c++/10/bits/fstream.tcc /usr/include/c++/10/iostream \
- /usr/include/c++/10/sstream /usr/include/c++/10/bits/sstream.tcc
+ /usr/include/c++/10/map /usr/include/c++/10/bits/stl_tree.h \
+ /usr/include/c++/10/bits/stl_map.h \
+ /usr/include/c++/10/bits/stl_multimap.h /usr/include/c++/10/sstream \
+ /usr/include/c++/10/bits/sstream.tcc
