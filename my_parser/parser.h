@@ -18,7 +18,7 @@ class CSV_parser {
 
   private:
     void read_the_file(const std::string &file_name);
-    static int get_number(const std::string &line, int &i);
+    static int get_number(const std::string &line, int &pointer);
     static bool can_be_a_number(const std::string &line, int &i);
     static void skip_space(const std::string &line, int &pointer);
     static void check_trash_after_expression(const std::string &line,

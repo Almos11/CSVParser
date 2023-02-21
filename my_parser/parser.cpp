@@ -55,22 +55,23 @@ void CSV_parser::read_the_file(const std::string &file_name) {
             count_elements_in_line++;
         }
         if (count_elements_in_line != map_columns.size()) {
-            throw std::runtime_error("Bad file format. File format does not match CSV format!");
+            throw std::runtime_error(
+                "Bad file format. File format does not match CSV format!");
         }
         is_first_line_in_file = false;
     }
     file.close();
 }
 
-int CSV_parser::get_number(const std::string &line, int &i) {
-    int negative_number = (line[i] == '-') ? -1 : 1;
+int CSV_parser::get_number(const std::string &line, int &pointer) {
+    int negative_number = (line[pointer] == '-') ? -1 : 1;
     if (negative_number == -1) {
-        i++;
+        pointer++;
     }
     int number = 0;
-    while (std::isdigit(line[i])) {
+    while (std::isdigit(line[pointer])) {
         number *= 10;
-        number += line[i++] - '0';
+        number += line[pointer++] - '0';
     }
     return number * negative_number;
 }
