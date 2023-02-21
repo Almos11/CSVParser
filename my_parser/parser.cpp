@@ -1,11 +1,7 @@
 #include "parser.h"
 
 void CSV_parser::print_csv_file() {
-    for (const auto &key : map_columns) {
-        std::cout << ',' << key.first;
-    }
-    std::cout << '\n';
-    std::size_t count_elements_in_row = map_columns.size() + 1;
+    std::size_t count_elements_in_row = map_columns.size();
     for (std::size_t i = 0; i < list_cells.size(); i++) {
         std::cout << list_cells[i];
         if ((i + 1) % count_elements_in_row == 0) {
@@ -32,15 +28,11 @@ void CSV_parser::read_the_file(const std::string &file_name) {
         throw std::runtime_error("File not found!");
     }
     while (std::getline(file, line)) {
+        std::size_t count_elements_in_line = 0;
         std::string row_line;
         std::stringstream ss(line);
         bool is_first_element_in_line = true;
         while (std::getline(ss, row_line, ',')) {
-            if (is_first_line_in_file && is_first_element_in_line) {
-                is_first_element_in_line = false;
-                col++;
-                continue;
-            }
             if (is_first_line_in_file) {
                 if (map_columns.count(row_line)) {
                     file.close();
@@ -58,8 +50,12 @@ void CSV_parser::read_the_file(const std::string &file_name) {
                     map_rows[row_line] = row++;
                     is_first_element_in_line = false;
                 }
-                list_cells.push_back(row_line);
             }
+            list_cells.push_back(row_line);
+            count_elements_in_line++;
+        }
+        if (count_elements_in_line != map_columns.size()) {
+            throw std::runtime_error("Bad file format. File format does not match CSV format!");
         }
         is_first_line_in_file = false;
     }
@@ -67,12 +63,16 @@ void CSV_parser::read_the_file(const std::string &file_name) {
 }
 
 int CSV_parser::get_number(const std::string &line, int &i) {
+    int negative_number = (line[i] == '-') ? -1 : 1;
+    if (negative_number == -1) {
+        i++;
+    }
     int number = 0;
     while (std::isdigit(line[i])) {
         number *= 10;
         number += line[i++] - '0';
     }
-    return number;
+    return number * negative_number;
 }
 
 void CSV_parser::skip_space(const std::string &line, int &pointer) {
@@ -109,7 +109,7 @@ int CSV_parser::get_number_from_exact_cell(const std::string &name_cell,
     int column_number = map_columns[name_column];
     int row_number = map_rows[name_row];
     int cell_number =
-        row_number * static_cast<int>(map_columns.size() + 1) + column_number;
+        (row_number + 1) * static_cast<int>(map_columns.size()) + column_number;
     int number = parser(list_cells[cell_number]);
     return number;
 }
@@ -123,14 +123,14 @@ int CSV_parser::expression_parser(const std::string &expression) {
     }
     pointer++;
     skip_space(expression, pointer);
-    int first_number = (std::isdigit(expression[pointer]))
+    int first_number = (can_be_a_number(expression, pointer))
                            ? get_number(expression, pointer)
                            : get_number_from_exact_cell(expression, pointer);
     skip_space(expression, pointer);
     int index_operator = pointer;
     pointer++;
     skip_space(expression, pointer);
-    int second_number = (std::isdigit(expression[pointer]))
+    int second_number = (can_be_a_number(expression, pointer))
                             ? get_number(expression, pointer)
                             : get_number_from_exact_cell(expression, pointer);
     check_trash_after_expression(expression, pointer);
@@ -156,11 +156,15 @@ int CSV_parser::expression_parser(const std::string &expression) {
     return first_number;
 }
 
+bool CSV_parser::can_be_a_number(const std::string &line, int &pointer) {
+    return (std::isdigit(line[pointer]) || line[pointer] == '-');
+}
+
 int CSV_parser::parser(std::string &line) {
     int number;
     int pointer = 0;
     skip_space(line, pointer);
-    if (std::isdigit(line[pointer])) {
+    if (can_be_a_number(line, pointer)) {
         number = get_number(line, pointer);
         check_trash_after_expression(line, pointer);
     } else {
@@ -171,7 +175,7 @@ int CSV_parser::parser(std::string &line) {
 }
 
 void CSV_parser::process_file() {
-    for (auto &list_cell : list_cells) {
-        parser(list_cell);
+    for (std::size_t i = map_columns.size(); i < list_cells.size(); i++) {
+        parser(list_cells[i]);
     }
 }
