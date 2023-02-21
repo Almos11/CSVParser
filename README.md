@@ -1,4 +1,7 @@
 # CSVParser
+
+Решение находится в ветке solution.
+
 Компиляция из директории CSVParser:
 
 1) Под clang:
